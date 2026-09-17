@@ -1,4 +1,4 @@
-<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Finish · Browser Use Olympics</title><style>
+<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Finish · Browser Use Olympics by Almond</title><style>
 :root{--ink:#17130f;--bone:#f5f2ec;--paper:#fbf9f5;--rule:#ddd7cc;--accent:#b5622d;--ok:#2e7d5b;--bad:#a33;}
 *{box-sizing:border-box}body{margin:0;background:var(--bone);color:var(--ink);font:16px/1.5 -apple-system,Inter,Helvetica,Arial,sans-serif}
 .wrap{max-width:820px;margin:0 auto;padding:28px 20px 60px}h1{font-size:34px;letter-spacing:-.03em;margin:0 0 6px}h2{font-size:22px;margin:28px 0 8px}
@@ -11,10 +11,11 @@ button,.btn{font:600 15px inherit;padding:11px 18px;border-radius:999px;border:0
 .status.bad{background:#fbeaea;color:var(--bad)}ol li{margin:6px 0}.muted{color:#6e665d}.spacer{height:520px;border-left:2px dashed var(--rule);margin:20px 0 20px 10px}
 .links a{display:inline-block;margin:6px 8px 6px 0;padding:8px 12px;border:1px solid var(--rule);border-radius:8px;background:#fff;color:var(--ink);text-decoration:none}
 code{background:#eee8de;padding:2px 6px;border-radius:6px}.big{font-size:40px;font-weight:700;letter-spacing:.1em}
-</style></head><body><div class='wrap'>
+.brand{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--rule);margin-bottom:18px}.brand a{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-weight:650;font-size:19px;letter-spacing:-.04em}.brand .seed{width:16px;height:24px}.brand .tag{font:11px/1.2 ui-monospace,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;color:#6e665d}footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--rule);font:12px/1.5 ui-monospace,Menlo,monospace;color:#6e665d}footer a{color:inherit}
+</style></head><body><div class='wrap'><div class='brand'><a href='https://almond.build/'><svg class='seed' viewBox='-55 -94 110 188' aria-hidden='true'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#2f8f6b'/><stop offset='1' stop-color='#7557c7'/></linearGradient></defs><path fill='url(#g)' d='M0-86.6A100 100 0 0 1 0 86.6 100 100 0 0 1 0-86.6Z'/></svg><span>almond</span></a><span class='tag'>Browser Use Olympics</span></div>
 <p class="kicker">Finish · run <span data-run></span></p><h1>Finish line</h1><p>Press <code>Finish run</code>. Then reply with exactly the RESULT line shown.</p>
 <div class="card"><p><button type="button" onclick="const r=BUO.finish();const line='RESULT: run '+r.run+' team '+r.team+' model '+r.model+' harness '+r.harness+' events '+r.okc+'/5 total '+(r.ms/1000).toFixed(1)+'s';document.getElementById('r').textContent=line;document.getElementById('s').textContent='Run recorded.';this.disabled=true;">Finish run</button></p><p class="big" id="r" style="font-size:20px;letter-spacing:0"></p><div role="status" id="s"></div></div>
-<p class="muted">See the <a href="hall">Hall of Fame</a>. Start another run from the <a href="./">start page</a>.</p></div><script>
+<p class="muted">See the <a href="hall">Hall of Fame</a>. Start another run from the <a href="./">start page</a>.</p><footer>Browser Use Olympics by <a href='https://almond.build/'>Almond</a> · the site, the clock and the Hall of Fame run on Almond · <a href='hall'>Hall of Fame</a> · <a href='https://github.com/eriestra/browser-use-olympics'>source</a></footer></div><script>
 (function(){
   const slug=location.pathname.split('/').filter(Boolean)[0];
   const q=new URLSearchParams(location.search);
