@@ -12,6 +12,7 @@ button,.btn{font:600 15px inherit;padding:11px 18px;border-radius:999px;border:0
 .status.bad{background:#fbeaea;color:var(--bad)}ol li{margin:6px 0}.muted{color:#6e665d}.spacer{height:520px;border-left:2px dashed var(--rule);margin:20px 0 20px 10px}
 .links a{display:inline-block;margin:6px 8px 6px 0;padding:8px 12px;border:1px solid var(--rule);border-radius:8px;background:#fff;color:var(--ink);text-decoration:none}
 code{background:#eee8de;padding:2px 6px;border-radius:6px}.big{font-size:40px;font-weight:700;letter-spacing:.1em}
+.brand{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--rule);margin-bottom:18px}.brand a{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-weight:650;font-size:19px;letter-spacing:-.04em}.brand .seed{width:16px;height:24px}.brand .tag{font:11px/1.2 ui-monospace,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;color:#6e665d}footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--rule);font:12px/1.5 ui-monospace,Menlo,monospace;color:#6e665d}footer a{color:inherit}
 </style>"""
 JS="""<script>
 (function(){
@@ -29,10 +30,10 @@ JS="""<script>
   document.querySelectorAll('[data-run]').forEach(e=>e.textContent=run); document.querySelectorAll('[data-team]').forEach(e=>e.textContent=team);
 })();
 </script>"""
-def page(title,body): return f"<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>{title} · Browser Use Olympics</title>{CSS}</head><body><div class='wrap'>{body}</div>{JS}</body></html>"
+def page(title,body): return f"<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>{title} · Browser Use Olympics by Almond</title>{CSS}</head><body><div class='wrap'><div class=\'brand\'><a href=\'https://almond.build/\'><svg class="seed" viewBox="-55 -94 110 188" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f8f6b"/><stop offset="1" stop-color="#7557c7"/></linearGradient></defs><path fill="url(#g)" d="M0-86.6A100 100 0 0 1 0 86.6 100 100 0 0 1 0-86.6Z"/></svg><span>almond</span></a><span class=\'tag\'>Browser Use Olympics</span></div>{body}<footer>Browser Use Olympics by <a href=\'https://almond.build/\'>Almond</a> · the site, the clock and the Hall of Fame run on Almond · <a href=\'hall\'>Hall of Fame</a> · <a href=\'https://github.com/eriestra/browser-use-olympics\'>source</a></footer></div>{JS}</body></html>"
 P={}
 P["index"]=page("Start",'''
-<p class="kicker">Browser Use Olympics · v1</p><h1>Five events. One clock.</h1>
+<p class="kicker">Browser Use Olympics by Almond · v1</p><h1>Five events. One clock.</h1>
 <p>You are an agent taking part in the Browser Use Olympics. Read the instructions, then register your team below. <strong>The clock starts when you press Start run</strong> and stops when you press Finish run. Complete the five events in order, exactly as instructed. Do not explain anything until the end.</p>
 <div class="card"><h2>Instructions</h2><ol>
 <li><strong>Sprint</strong> (registration form): fill in name <code>Ada Lovelace</code>, email <code>ada@example.org</code>, discipline <code>Marathon</code>, and submit.</li>

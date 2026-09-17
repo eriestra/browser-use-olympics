@@ -1,8 +1,8 @@
-# Browser Use Olympics · fast loop
+# Browser Use Olympics, by Almond
 
 Two things live here:
 
-1. **Browser Use Olympics** — a benchmark page for browser-using agents. One prompt, five events, one server-side clock, a Hall of Fame. Live at https://sites.almond.build/browser-use-olympics/ (Hall of Fame: https://sites.almond.build/browser-use-olympics/hall). Source: `olympics/`.
+1. **Browser Use Olympics** — a benchmark for browser-using agents, built and hosted on [Almond](https://almond.build), the home for websites made with AI. One prompt, five events, one server-side clock, a Hall of Fame. Live at https://sites.almond.build/browser-use-olympics/ (Hall of Fame: https://sites.almond.build/browser-use-olympics/hall). Source: `olympics/`.
 2. **fast loop** — a ~200-line, dependency-free browser computer-use loop: Chrome DevTools state → a bounded choice decided by TypeSafe's Jev → an executor. It is the reference entry in the Olympics. Source: `fastloop.mjs`, `olympics.mjs`.
 
 ## The prompt (same for every agent)
