@@ -45,10 +45,11 @@ export const STATE_JS = `(() => {
     if (el.disabled) it.disabled = true; if (el === document.activeElement) it.focused = true;
     els.push(it);
   }
+  const pageValues = [...new Set([...document.querySelectorAll('code')].filter(vis).map(c => c.innerText.trim()).filter(t => t && t.length <= 60))].slice(0, 8);
   const heads = [...document.querySelectorAll('h1,h2,h3')].filter(vis).slice(0, 8).map(h => h.innerText.trim().replace(/\\s+/g, ' ').slice(0, 80));
   const status = [...document.querySelectorAll('[role=status],[aria-live],output')].map(e => e.innerText.trim()).filter(Boolean).slice(0, 4);
   const text = (root === document ? document.body : root).innerText.replace(/\\s+/g, ' ').slice(0, 700);
-  return { url: location.href, title: document.title, ready: document.readyState, scrollY: Math.round(scrollY), pageHeight: document.body.scrollHeight, viewportHeight: innerHeight, dialogOpen: dialogs.length > 0, headings: heads, status, elements: els, textSample: text };
+  return { url: location.href, title: document.title, ready: document.readyState, scrollY: Math.round(scrollY), pageHeight: document.body.scrollHeight, viewportHeight: innerHeight, dialogOpen: dialogs.length > 0, headings: heads, status, pageValues, elements: els, textSample: text };
 })()`;
 
 export function sig(s) { return JSON.stringify([s.url, s.dialogOpen, s.status, s.elements.map(e => [e.role, e.name, e.value, e.selected])]); }
@@ -70,13 +71,14 @@ export function diff(prev, cur) {
 export function buildOptions(state, task) {
   const opts = {}; const acts = {};
   const seen = Object.fromEntries((task._seen || []).map((v, i) => [`seen_${i}`, v]));
+  const shown = Object.fromEntries((state.pageValues || []).map((v, i) => [`shown_${i}`, v]));
   const add = (k, label, act) => { if (Object.keys(opts).length >= 200) return; opts[k] = label; acts[k] = act; };
   for (const e of state.elements) {
     if (e.disabled) continue;
     const where = e.inViewport ? "" : " (below the fold)";
     if (["button", "submit", "link", "tab", "menuitem", "summary", "checkbox", "radio"].includes(e.role)) add(`click_${e.id}`, `Click the ${e.role} '${e.name || "unnamed"}'${where}`, { type: "click", id: e.id });
     else if (e.role === "select") { for (let i = 0; i < (e.options || []).length; i++) { const o = e.options[i]; if (!o || /^(selecciona|select|choose|elige)/i.test(o) || o === e.selected) continue; add(`select_${e.id}_${i}`, `Choose '${o}' in the dropdown '${e.name || "unnamed"}'${where}`, { type: "select", id: e.id, index: i }); } }
-    else if (["text", "email", "tel", "search", "url", "number", "textarea", "password"].includes(e.role)) { for (const [k, v] of Object.entries({ ...(task.data || {}), ...seen })) { if (e.value && String(v).startsWith(e.value)) continue; if (task._tried && task._tried[`fill_${e.id}_${k}`] >= 2) continue; const label = k.startsWith('seen_') ? `the value '${v}' seen on an earlier page` : `the ${k} ('${String(v).slice(0, 30)}')`; add(`fill_${e.id}_${k}`, `Type ${label} into the ${e.role} field '${e.name || "unnamed"}'${e.value ? ` (currently '${e.value}')` : ""}${where}`, { type: "fill", id: e.id, text: String(v) }); } }
+    else if (["text", "email", "tel", "search", "url", "number", "textarea", "password"].includes(e.role)) { for (const [k, v] of Object.entries({ ...(task.data || {}), ...seen, ...shown })) { if (e.value && String(v).startsWith(e.value)) continue; if (task._tried && task._tried[`fill_${e.id}_${k}`] >= 2) continue; const label = k.startsWith('seen_') ? `the value '${v}' seen on an earlier page` : k.startsWith('shown_') ? `the value '${v}' that this page shows` : `the ${k} ('${String(v).slice(0, 30)}')`; add(`fill_${e.id}_${k}`, `Type ${label} into the ${e.role} field '${e.name || "unnamed"}'${e.value ? ` (currently '${e.value}')` : ""}${where}`, { type: "fill", id: e.id, text: String(v) }); } }
   }
   if (state.scrollY + state.viewportHeight < state.pageHeight - 20) { add("scroll_down", "Scroll down one screen to see more of the page", { type: "scroll", dy: 1 }); add("scroll_bottom", "Jump to the very bottom of the page", { type: "jump", to: "bottom" }); }
   if (state.scrollY > 0) { add("scroll_up", "Scroll up one screen", { type: "scroll", dy: -1 }); add("scroll_top", "Jump to the top of the page", { type: "jump", to: "top" }); }
@@ -130,13 +132,13 @@ export async function plan(task, state, history, reason) {
 export async function run(task, existing) {
   const cdp = existing || await connect(task.urlMatch);
   if (task.url) { await cdp.send("Page.navigate", { url: task.url }); await sleep(800); }
-  let prev = null, state = await settle(cdp); const history = []; const log = []; let totalTokens = 0, escalations = 0; const t0 = performance.now(); const initialStatus = new Set(state.status);
+  let prev = null, state = await settle(cdp); const history = []; const log = []; let totalTokens = 0, totalOut = 0, escalations = 0; const t0 = performance.now(); const initialStatus = new Set(state.status);
   for (let step = 1; step <= MAX_STEPS; step++) {
     const tObs = performance.now(); state = await cdp.eval(STATE_JS); const change = diff(prev, state); const obsMs = performance.now() - tObs;
     for (const m of (state.textSample.match(/\b\d{4,8}\b/g) || [])) { task._seen = task._seen || []; if (!task._seen.includes(m) && task._seen.length < 5) task._seen.push(m); }
     if ((task.untilUrl && state.url.includes(task.untilUrl)) || (task.untilText && state.textSample.includes(task.untilText))) { log.push({ step, observe_ms: Math.round(obsMs), decide_ms: 0, tokens: 0, options: 0, choice: '(condition met)', confidence: 1, complete: 1, blocked: 0, top: '', result: 'DONE' }); break; }
     const { opts, acts } = buildOptions(state, task);
-    const d = await decide(state, task, history, change, opts); totalTokens += d.usage.input_tokens;
+    const d = await decide(state, task, history, change, opts); totalTokens += d.usage.input_tokens; totalOut += d.usage.output_tokens || 0;
     const a = d.answers; const choice = a.next.choice; const conf = a.next.confidence; const top = Object.entries(a.next.probabilities).sort((x, y) => y[1] - x[1]).slice(0, 3).map(([k, v]) => `${k}:${v.toFixed(2)}`).join(" ");
     const row = { step, observe_ms: Math.round(obsMs), decide_ms: Math.round(d.ms), tokens: d.usage.input_tokens, options: Object.keys(opts).length, choice: opts[choice], confidence: +conf.toFixed(2), complete: +a.complete.noul.toFixed(2), blocked: +a.blocked.noul.toFixed(2), top };
     const newStatus = state.status.filter(s => !initialStatus.has(s));
@@ -156,7 +158,7 @@ export async function run(task, existing) {
   }
   const wall = (performance.now() - t0) / 1000;
   if (!existing) cdp.ws.close();
-  return { task: task.name, steps: log.length, wall_s: +wall.toFixed(2), tokens: totalTokens, final: log[log.length - 1]?.result || "MAX_STEPS", log, finalState: { url: state.url, dialogOpen: state.dialogOpen, status: state.status, text: state.textSample.slice(0, 200) } };
+  return { task: task.name, steps: log.length, wall_s: +wall.toFixed(2), tokens: totalTokens, tokens_out: totalOut, final: log[log.length - 1]?.result || "MAX_STEPS", log, finalState: { url: state.url, dialogOpen: state.dialogOpen, status: state.status, text: state.textSample.slice(0, 200) } };
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

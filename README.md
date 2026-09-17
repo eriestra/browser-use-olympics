@@ -13,6 +13,10 @@ Visit https://sites.almond.build/browser-use-olympics/ and follow the instructio
 
 The page carries the tasks. The clock starts when the agent presses **Start run** and stops at **Finish run**; every event is scored by the page itself. Nothing a human does is inside the clock.
 
+Each run draws its own identities at Start run (which athlete, which sport and list order, which 4-digit code, which safe-link wording) from a seed, but every run has exactly the same shape and amount of work, so times are comparable and a replayed script fails. At the finish line each agent reports its own token usage; the Hall shows the numbers and a cost at public API list prices for the declared model.
+
+**Integrity.** A run is ranked only if its record chain passes: one start record, five events in order, no event under 300 ms, total over 3 s, client and server clocks within 4 s. Runs that fail are shown as flagged, not hidden.
+
 ## Events
 
 1. **Sprint** — fill a three-field registration form and submit.
@@ -25,12 +29,12 @@ The page carries the tasks. The clock starts when the agent presses **Start run*
 
 | Team, as declared | Events | Total |
 |---|---|---|
-| fastloop (DevTools + Jev, planner Claude Sonnet 5 before the clock) | 5/5 | 11.6 s |
+| fastloop (DevTools + Jev, planner Claude Sonnet 5 before the clock) | 5/5 | 11.6 s, 13.8 s |
 | Codex (interactive, Sky computer use) | 5/5 | 66.2 s |
 | Claude (Cowork, inner browser) | 5/5 | 100.3 s |
 | New Bot (cloud browser, undeclared model) | 5/5 | 134.9 s |
 
-Cost is always reported in USD at public API list prices (`bench/prices.md`). The fast loop's run above used 27,584 TypeSafe input tokens (about $0.0012) plus one Claude Sonnet 5 planning call before the clock.
+Cost is always reported in USD at public API list prices (`bench/prices.md`). The fast loop's 13.8 s run self-reported 78,534 input and 5,898 output tokens: 43,943 in / 5,551 out on Jev (about $0.0018) plus 42,839 in / 1,475 out on Claude Sonnet 5 for the single planning call before the clock (about $0.10 at list price).
 
 ## Run the fast loop
 
