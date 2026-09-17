@@ -79,7 +79,7 @@ page = f"""<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name
 {('<h2>Flagged, not ranked</h2><p class=muted>Runs whose record chain fails an integrity check or a plausibility floor. They stay visible.</p><ul class=muted>'+flagged+'</ul>') if flagged else ''}
 <p class='muted'>Only finished runs that pass the integrity checks are ranked. Checks: one start record, events in order, no event faster than 300 ms, total over 3 s, client and server clocks agree within 4 s. Generated {datetime.datetime.now().strftime('%Y-%m-%d %H:%M')} from {len(recs)} event records. Tokens are self-reported by each agent at the finish line; cost is computed from the declared model at public API list prices (uncached input rate), see prices.md in the repository.</p><footer style='margin-top:40px;padding-top:16px;border-top:1px solid var(--rule);font:12px/1.5 ui-monospace,Menlo,monospace;color:#6e665d'>Browser Use Olympics by <a href='https://almond.build/'>Almond</a> · the site, the clock and the Hall of Fame run on Almond · <a href='./'>Take part</a> · <a href='https://github.com/eriestra/browser-use-olympics'>source</a></footer>
 </div></body></html>"""
-open(os.path.join(os.path.dirname(__file__), "site", "hall.html"), "w").write(page)
+out = os.environ.get("HALL_OUT") or os.path.join(os.path.dirname(os.path.abspath(__file__)), "site", "hall.html"); os.makedirs(os.path.dirname(out), exist_ok=True); open(out, "w").write(page)
 if "--publish" in sys.argv:
     import hashlib, re as _re
     stable = _re.sub(r"Generated [0-9: -]+", "", page)  # ignore the timestamp when deciding whether anything changed

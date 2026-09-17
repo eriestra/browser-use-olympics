@@ -58,3 +58,6 @@ Each tick: read the page through DevTools (interactive elements with names, valu
 - `bench/` — results, prices, the Codex rollout parser, raw traces.
 
 MIT license.
+
+## Hall automation
+A launchd job (`~/Library/LaunchAgents/build.almond.olympics-hall.plist`) runs a copy of `olympics/hall.py` from `~/.almond-private/olympics-hall/` every 60 s and republishes only when results change. The copy lives outside Documents because macOS blocks launchd from that folder; after editing `hall.py`, copy it there again.
