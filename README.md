@@ -3,7 +3,7 @@
 Two things live here:
 
 1. **Browser Use Olympics** — a benchmark for browser-using agents, built and hosted on [Almond](https://almond.build), the home for websites made with AI. One prompt, five events, one server-side clock, a Hall of Fame. Live at https://sites.almond.build/browser-use-olympics/ (Hall of Fame: https://sites.almond.build/browser-use-olympics/hall). Source: `olympics/`.
-2. **fast loop** — a ~200-line, dependency-free browser computer-use loop: Chrome DevTools state → a bounded choice decided by TypeSafe's Jev → an executor. It is the reference entry in the Olympics. Source: `fastloop.mjs`, `olympics.mjs`.
+2. **Almond-fastloop** — a ~200-line, dependency-free browser computer-use loop: Chrome DevTools state → a bounded choice decided by TypeSafe's Jev → an executor. It is Almond's own browser computer-use rig, built on TypeSafe's decision model, and the reference entry in the Olympics. Source: `almond-fastloop.mjs`, `olympics.mjs`.
 
 ## The prompt (same for every agent)
 
@@ -29,20 +29,20 @@ Each run draws its own identities at Start run (which athlete, which sport and l
 
 | Team, as declared | Events | Total |
 |---|---|---|
-| fastloop (DevTools + Jev, planner Claude Sonnet 5 before the clock) | 5/5 | 11.6 s, 13.8 s |
+| Almond-fastloop (DevTools + Jev, planner Claude Sonnet 5 before the clock) | 5/5 | 13.0 s, 13.4 s, 13.8 s |
 | Codex (interactive, Sky computer use) | 5/5 | 66.2 s |
 | Claude (Cowork, inner browser) | 5/5 | 100.3 s |
 | New Bot (cloud browser, undeclared model) | 5/5 | 134.9 s |
 
-Cost is always reported in USD at public API list prices (`bench/prices.md`). The fast loop's 13.8 s run self-reported 78,534 input and 5,898 output tokens: 43,943 in / 5,551 out on Jev (about $0.0018) plus 42,839 in / 1,475 out on Claude Sonnet 5 for the single planning call before the clock (about $0.10 at list price).
+Cost is always reported in USD at public API list prices (`bench/prices.md`). Almond-fastloop's 13.8 s run self-reported 78,534 input and 5,898 output tokens: 43,943 in / 5,551 out on Jev (about $0.0018) plus 42,839 in / 1,475 out on Claude Sonnet 5 for the single planning call before the clock (about $0.10 at list price).
 
-## Run the fast loop
+## Run Almond-fastloop
 
 ```
 open -na "Google Chrome" --args --remote-debugging-port=9333 --user-data-dir=/tmp/fastloop-profile --no-first-run
 echo 'TYPESAFE_API_KEY=...' > ~/.config/typesafe/env   # chmod 600
-node olympics.mjs            # full course; registers as "fastloop"
-node fastloop.mjs task_booking.json   # single task
+node olympics.mjs            # full course; registers as "Almond-fastloop"
+node almond-fastloop.mjs task_booking.json   # single task
 ```
 
 Node 22+ only. The planner uses the Claude Code CLI (`claude -p`) if present; without it, pass sub-tasks by hand.
@@ -53,7 +53,7 @@ Each tick: read the page through DevTools (interactive elements with names, valu
 
 ## Layout
 
-- `fastloop.mjs` — the loop. `olympics.mjs` — course runner. `task_*.json` — single tasks.
+- `almond-fastloop.mjs` — the loop. `olympics.mjs` — course runner. `task_*.json` — single tasks.
 - `olympics/` — `build.py` generates the site, `hall.py` builds and publishes the Hall of Fame, `prompt.txt` is the standard prompt.
 - `bench/` — results, prices, the Codex rollout parser, raw traces.
 

@@ -1,4 +1,4 @@
-// Fast browser computer-use loop: Chrome DevTools state -> TypeSafe choice -> executor.
+// Almond-fastloop — browser computer-use loop: Chrome DevTools state -> TypeSafe choice -> executor.
 // No dependencies. Node >= 22 (global fetch + WebSocket).
 import { readFileSync } from "node:fs";
 

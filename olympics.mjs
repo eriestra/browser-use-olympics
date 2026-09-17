@@ -1,12 +1,12 @@
 // Browser Use Olympics runner for the fast loop.
 // Prompt to every stack is the same one line; this runner reads the instructions from the page,
 // asks the planner (Claude, headless) once to turn them into sub-tasks, registers, then runs the loop per page.
-import { connect, STATE_JS, run, sleep } from "./fastloop.mjs";
+import { connect, STATE_JS, run, sleep } from "./almond-fastloop.mjs";
 import { execFile } from "node:child_process";
 import { writeFileSync } from "node:fs";
 
 const START = process.env.BUO_URL || "https://sites.almond.build/browser-use-olympics/";
-const IDENTITY = { team: process.env.BUO_TEAM || "fastloop", model: "jev-latest", harness: "DevTools+Jev, planner claude-sonnet-5" };
+const IDENTITY = { team: process.env.BUO_TEAM || "Almond-fastloop", model: "jev-latest", harness: "Almond-fastloop: DevTools+Jev, planner claude-sonnet-5" };
 
 const planUsage = { in: 0, out: 0 };
 async function planCourse(state) {
@@ -62,7 +62,7 @@ async function runUntilNav(task, fromUrl) {
   const origEval = cdp.eval.bind(cdp);
   // wrap: inject a synthetic untilUrl check by polling URL inside run via untilText fallback
   t._fromUrl = fromUrl;
-  // fastloop.run supports untilUrl (substring) only; emulate "changed" with a sentinel handled below
+  // almond-fastloop run supports untilUrl (substring) only; emulate "changed" with a sentinel handled below
   return runWithNavWatch(t, fromUrl);
 }
 async function runWithNavWatch(task, fromUrl) {

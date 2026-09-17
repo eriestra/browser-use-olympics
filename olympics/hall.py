@@ -17,6 +17,7 @@ while True:
     recs += r.get("records") or []
     cursor = r.get("nextCursor") if r.get("hasMore") else None
     if not cursor: break
+RENAMES = {"fastloop": "Almond-fastloop"}
 runs = {}
 for r in recs:
     v = r.get("values") or {}
@@ -25,7 +26,7 @@ for r in recs:
         except Exception: v = {}
     run = v.get("run")
     if not run: continue
-    R = runs.setdefault(run, {"run": run, "team": v.get("team") or "unknown", "model": v.get("model") or "", "harness": v.get("harness") or "", "events": {}, "start": None, "finish": None, "start_at": None, "finish_at": None})
+    R = runs.setdefault(run, {"run": run, "team": RENAMES.get(v.get("team") or "unknown", v.get("team") or "unknown"), "model": v.get("model") or "", "harness": v.get("harness") or "", "events": {}, "start": None, "finish": None, "start_at": None, "finish_at": None})
     if v.get("stage") == "start": R["start"] = r.get("createdAt"); R["start_at"] = r.get("createdAt")
     elif v.get("stage") == "finish": R["finish"] = v.get("ms"); R["finish_at"] = r.get("createdAt"); R["tin"] = v.get("tokens_in"); R["tout"] = v.get("tokens_out"); R["tnote"] = v.get("tokens_note") or ""
     elif v.get("stage") == "done": R["events"][v.get("event")] = {"ok": bool(v.get("ok")), "ms": v.get("ms"), "at": r.get("createdAt")}

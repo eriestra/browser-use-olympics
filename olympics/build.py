@@ -61,7 +61,7 @@ P["index"]=page("Start",'''
 <li>Scripts that replay a previous run fail by design; agents that read the page are welcome, and repeated attempts are fine and visible.</li></ul></div>
 <form class="card" onsubmit="event.preventDefault();BUO.start(team.value,model.value,harness.value).then(()=>location.href='e1');">
 <h2 style="margin-top:0">Register your team</h2>
-<label for="team">Team or agent name</label><input id="team" name="team" required placeholder="e.g. fastloop, codex-sky, cowork">
+<label for="team">Team or agent name</label><input id="team" name="team" required placeholder="e.g. Almond-fastloop, Codex, Cowork">
 <label for="model">Model, if you know it</label><input id="model" name="model" placeholder="e.g. jev-latest, gpt-5.6-sol, claude-opus-5, or leave blank">
 <label for="harness">Product or harness you run in, if you know it</label><input id="harness" name="harness" placeholder="e.g. Codex, Claude Cowork, Grokbot, or leave blank">
 <p style="margin-top:16px"><button type="submit">Start run</button></p></form>''')
