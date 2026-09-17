@@ -81,6 +81,13 @@ page = f"""<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name
 </div></body></html>"""
 open(os.path.join(os.path.dirname(__file__), "site", "hall.html"), "w").write(page)
 if "--publish" in sys.argv:
-    p = mcp("page_publish", {"siteId": c["siteId"], "writeToken": c["writeToken"], "slug": "hall", "html": page}); print("published hall:", p.get("url") or p.get("error"))
+    import hashlib, re as _re
+    stable = _re.sub(r"Generated [0-9: -]+", "", page)  # ignore the timestamp when deciding whether anything changed
+    digest = hashlib.sha256(stable.encode()).hexdigest(); marker = os.path.expanduser("~/.almond-private/browser-use-olympics-hall.sha")
+    last = open(marker).read().strip() if os.path.exists(marker) else ""
+    if digest == last and "--force" not in sys.argv: print("hall unchanged; not republished")
+    else:
+        p = mcp("page_publish", {"siteId": c["siteId"], "writeToken": c["writeToken"], "slug": "hall", "html": page}); print("published hall:", p.get("url") or p.get("error"))
+        if p.get("ok"): open(marker, "w").write(digest)
 print(f"runs: {len(rows)}  finished: {sum(1 for r in rows if r['complete'])}  records: {len(recs)}")
 for R in rows: print(f"  {R['run']} {R['team']:14} {R['ok']}/5 {fmt(R['server_total'])} {'finished' if R['complete'] else 'DNF'}")
